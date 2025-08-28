@@ -98,9 +98,9 @@ const registerBollingerBandsIndicator = () => {
           title: "BOLL-UP: ",
           type: "line",
           baseValue: 0,
-          attrs: ({}) => ({
-            color: "#EF4444",
-            lineWidth: 2,
+          styles: ({ defaultStyles }) => ({
+            color: defaultStyles?.lines?.[0]?.color ?? "#EF4444",
+            size: defaultStyles?.lines?.[0]?.size ?? 2,
           }),
         },
         {
@@ -108,9 +108,9 @@ const registerBollingerBandsIndicator = () => {
           title: "BOLL-MID: ",
           type: "line",
           baseValue: 0,
-          attrs: ({}) => ({
-            color: "#3B82F6",
-            lineWidth: 2,
+          styles: ({ defaultStyles }) => ({
+            color: defaultStyles?.lines?.[1]?.color ?? "#3B82F6",
+            size: defaultStyles?.lines?.[1]?.size ?? 2,
           }),
         },
         {
@@ -118,9 +118,9 @@ const registerBollingerBandsIndicator = () => {
           title: "BOLL-DN: ",
           type: "line",
           baseValue: 0,
-          attrs: ({}) => ({
-            color: "#22C55E",
-            lineWidth: 2,
+          styles: ({ defaultStyles }) => ({
+            color: defaultStyles?.lines?.[2]?.color ?? "#22C55E",
+            size: defaultStyles?.lines?.[2]?.size ?? 2,
           }),
         },
       ],
@@ -194,6 +194,8 @@ const registerBollingerBandsIndicator = () => {
 const BollingerBandsChart: React.FC = () => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<Chart | null>(null);
+  const indicatorAddedRef = useRef<boolean>(false);
+  const bollIndicatorIdRef = useRef<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [indicatorAdded, setIndicatorAdded] = useState(false);
@@ -329,7 +331,15 @@ const BollingerBandsChart: React.FC = () => {
         chartRef.current = null;
       }
     };
-  }, [indicatorAdded, bollIndicatorId]);
+  }, []);
+
+  // Keep refs in sync so event listeners see latest values
+  useEffect(() => {
+    indicatorAddedRef.current = indicatorAdded;
+  }, [indicatorAdded]);
+  useEffect(() => {
+    bollIndicatorIdRef.current = bollIndicatorId;
+  }, [bollIndicatorId]);
 
   // Update indicator when params or style change
   useEffect(() => {
@@ -402,6 +412,40 @@ const BollingerBandsChart: React.FC = () => {
             "✅ Bollinger Bands added successfully with ID:",
             indicatorId
           );
+
+          // Apply styles immediately so colors are visible
+          chartRef.current.overrideIndicator({
+            id: indicatorId,
+            name: "BOLL",
+            styles: {
+              lines: [
+                {
+                  color: bollingerStyle.upper.color,
+                  size: bollingerStyle.upper.lineWidth,
+                  style:
+                    bollingerStyle.upper.lineStyle === "dashed"
+                      ? LineType.Dashed
+                      : LineType.Solid,
+                },
+                {
+                  color: bollingerStyle.basis.color,
+                  size: bollingerStyle.basis.lineWidth,
+                  style:
+                    bollingerStyle.basis.lineStyle === "dashed"
+                      ? LineType.Dashed
+                      : LineType.Solid,
+                },
+                {
+                  color: bollingerStyle.lower.color,
+                  size: bollingerStyle.lower.lineWidth,
+                  style:
+                    bollingerStyle.lower.lineStyle === "dashed"
+                      ? LineType.Dashed
+                      : LineType.Solid,
+                },
+              ],
+            },
+          });
 
           // Log the created indicator details
           const createdIndicator = chartRef.current.getIndicators({

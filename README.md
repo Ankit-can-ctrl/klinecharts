@@ -1,3 +1,10 @@
+=====>>>>>>>>>>>>>>>>>>>>>>>>>
+#NOTE
+
+PLEASE PRESS : CTRL+SHIFT+V (windows) in readme.md file to view the images/ screenshots as well
+
+======>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 # Bollinger Bands Indicator
 
 A production-ready Bollinger Bands indicator built with Next.js, TypeScript, and KLineCharts. This implementation provides a TradingView-like experience with comprehensive settings and real-time updates.
@@ -162,3 +169,6 @@ For issues and questions, please open a GitHub issue with:
 - Steps to reproduce
 - Expected vs actual behavior
 - Screenshots if applicable
+
+<img src="src/assets/ss1.png" alt="preview" width="1200">
+<img src="src/assets/ss2.png" alt="preview" width="1200">
